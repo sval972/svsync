@@ -103,7 +103,7 @@ Svsync synchronization profile should look like the following template:
 * All sources configured in profile will be copied to the target as its own subfolder with the name of the source. So, after synchronization, target will have 3 subfolders source1, source2, source3, etc.
 
 ### File skipping
-Svsync supports skipping certain files from source while scanning. To skip files, use <exclude> tag inside <source>. There are 2 options available to skip files.
+Svsync supports skipping certain files from source while scanning. To skip files, use "exclude" tag inside "source". There are 2 options available to skip files.
 
 #### Option 1: Skip subpath
 Use path attribute to skip subfolder or specific file within source. The path can be absolute or relative. Unix file separator is supported for windows.
@@ -127,19 +127,20 @@ Use filter attribute with regex pattern. Files, which full path is matched with 
 ```
 	
 ### How to define path to storage
-The path to storage is specified as "path" atribute inside both <source> and <target> tags. Some storage types require additional attributes for authentication.
+The path to storage is specified as "path" atribute inside both "source" and "target" tags. Some storage types require additional attributes for authentication.
 
 #### Local storage
 Use absolute path to the folder that needs to be synced. Both Windows and Unix paths are supported.
 
     Example: <source name="my_photos" path="/home/user/photos" />
+	Example: <source name="my_photos" path="D:\files\photos" />
 
 #### SMB storage
 Use the following format for SMB shares:
 
     smb://<server_hostname>/path
 
-Also, if SMB drive require authentication, add the following attributes: user, password.
+Also, if SMB share requires authentication, add the following attributes: user, password.
 	
 	Example: <source name="my_photos" path="smb://192.168.0.1/photos" user="user1" password="password1" />
 	
@@ -168,7 +169,7 @@ Also, use the following attributes for authentication: secret.
 Note: Svsync will not create new storage accounts, it assumes that all storage accounts for sources and targets exist.
 
 ### Cache files map
-Svsync scans both source and target on every run. If files doesn't change often at target, there is an option to cache the results of the scan for defined period of time.
+Svsync scans both source and target on every run. If files don't change often at target, there is an option to cache the results of the scan for defined period of time.
 
 ```xml
 	<target path="azure://mystorage" secret="my_secret" cache-days="7"/>
