@@ -62,7 +62,7 @@ public class Svsync {
     }
 
     private static void printUsage() {
-        System.out.println("USAGE: svsync -profile <profile> [-analyze] [-restore <>]");
+        System.out.println("USAGE: svsync -profile <profile> [-analyze] [-restore <local_path>]");
     }
     
     private static Map<String, String> parseParameters(String[] args) {

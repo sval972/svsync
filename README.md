@@ -76,5 +76,147 @@ All dependencies will be added automatically if Maven is used. Otherwise, downlo
 
 ##Usage
 
+To run Svsync use the following command:
 
-##Sample Profile Configuration
+    svsync -profile <profile_path> [-analyze] [-restore <local_path>]
+
+* -profile <profile_path> specifies path to a local synchronization profile to run
+* -analyze is an optional flag that makes svsync to run analysis only and print report, rather than doing any actual synchronization.
+* -restore <local_path> is an optional argument that makes svsync to download all files from target (defined inside profile) to a locally specified path.
+
+##Profile Configuration
+### Profile template
+
+Svsync synchronization profile should look like the following template:
+
+```xml
+<?xml version="1.0"?>
+<profile>
+	<source name="source1" path="path_to_source1" />
+	<source name="source2" path="path_to_source2" />
+	<source name="source3" path="path_to_source3" />
+	<target path="path_to_target "/>
+</profile>
+```
+
+* Svsync support multiple sources of any type in a single profile, however only single target per profile is currently supported.
+* All sources configured in profile will be copied to the target as its own subfolder with the name of the source. So, after synchronization, target will have 3 subfolders source1, source2, source3, etc.
+
+### File skipping
+Svsync supports skipping certain files from source while scanning. To skip files, use <exclude> tag inside <source>. There are 2 options available to skip files.
+
+#### Option 1: Skip subpath
+Use path attribute to skip subfolder or specific file within source. The path can be absolute or relative. Unix file separator is supported for windows.
+
+```xml
+    <source name="myphotos" path="D:\photos" >
+        <exclude path="my_brother_trips/" />
+        <exclude path="trip_to_japan/huge_video_file.avi" />
+        <exclude path="ignore_me.txt" />
+    </source>
+```
+	
+#### Option 2: Skip files matched by regex
+Use filter attribute with regex pattern. Files, which full path is matched with regex will be skipped.
+
+```xml
+    <source name="myphotos" path="D:\photos" >
+		<exclude filter="(?:^|.*/)Thumbs\.db$" />
+		<exclude filter="(?:^|.*/)Desktop\.ini$" />
+    </source>
+```
+	
+### How to define path to storage
+The path to storage is specified as "path" atribute inside both <source> and <target> tags. Some storage types require additional attributes for authentication.
+
+#### Local storage
+Use absolute path to the folder that needs to be synced. Both Windows and Unix paths are supported.
+
+    Example: <source name="my_photos" path="/home/user/photos" />
+
+#### SMB storage
+Use the following format for SMB shares:
+
+    smb://<server_hostname>/path
+
+Also, if SMB drive require authentication, add the following attributes: user, password.
+	
+	Example: <source name="my_photos" path="smb://192.168.0.1/photos" user="user1" password="password1" />
+	
+#### Amazon S3
+Use the following format for Amazon S3:
+
+    S3://<bucket_name>/optional_path
+
+Also, use the following attributes for authentication: id, secret.
+	
+	Example: <source name="my_photos" path="S3://my_bucket/my_photos" id="my_id" secret="my_secret" />
+	Example: <source name="my_photos2" path="S3://my_bucket2" id="my_id" secret="my_secret" />
+
+Note: Svsync will not create new buckets, it assumes that all S3 buckets for sources and targets exist.
+	
+#### Azure Blobs
+Use the following format for Azure blobs:
+
+    azure://<storage_account_name>/container_name/optional_path
+
+Also, use the following attributes for authentication: secret.
+	
+	Example: <source name="my_photos" path="azure://my_storage/my_photos" secret="my_secret" />
+	Example: <source name="my_photos2" path="azure://my_storage/my_photos/trips" secret="my_secret" />
+
+Note: Svsync will not create new storage accounts, it assumes that all storage accounts for sources and targets exist.
+
+### Cache files map
+Svsync scans both source and target on every run. If files doesn't change often at target, there is an option to cache the results of the scan for defined period of time.
+
+```xml
+	<target path="azure://mystorage" secret="my_secret" cache-days="7"/>
+```
+	
+##Sample profile 1
+```xml
+<?xml version="1.0"?>
+<profile>
+	
+	<source name="photos" path="smb://192.168.0.1/Storage/Photos" user="user1" password="12345">
+		<exclude filter="(?:^|.*/)Thumbs\.db$" />
+		<exclude filter="(?:^|.*/)Desktop\.ini$" />
+	</source>
+
+
+	<source name="videos" path="smb://192.168.0.1/Storage/Videos" user="user1" password="12345">
+		<exclude filter="(?:^|.*/)Thumbs\.db$" />
+		<exclude filter="(?:^|.*/)Desktop\.ini$" />
+	</source>
+
+		
+	<source name="archived-documents" path="smb://192.168.0.1/Storage/Archive" user="user1" password="12345">
+		<exclude filter="(?:^|.*/)Thumbs\.db$" />
+		<exclude filter="(?:^|.*/)Desktop\.ini$" />
+	</source>
+
+	
+	<source name="svsync-binaries" path="/home/user/svsync">
+		<exclude filter=".+\.log$" />
+		<exclude filter=".+\.snap$" />
+	</source>
+	
+	<target path="azure://myazureaccount" secret="VeryVeryLongSecret" cache-days="7"/>
+
+</profile>
+
+```
+
+##Sample profile 2
+```xml
+	<?xml version="1.0"?>
+	<profile>
+		<source name="my_s3_files" path="S3://my_bucket/my_files" id="my_amazon_id" secret="my_amazon_secret">
+			<exclude path="test_ignore" />
+			<exclude path="test_partial/ignore_me.txt" />
+			<exclude path="ignore_me.txt" />
+		</source>
+		<target path="D:\files_from_s3" />
+	</profile>
+```
