@@ -2,7 +2,7 @@
 
 This project provides a tool for one-way, efficient file synchronization from source to target. Unlike other file synchronization solutions, this tool supports multiple storage types (see below currently supported types) and can sync files between any combination of these types.
 
-#Features
+# Features
   * 100% cross-platform
 
   You can run it on Windows, Linux, Mac OSX or Raspberry Pi smoothly with exactly the same binaries.
@@ -31,7 +31,7 @@ This project provides a tool for one-way, efficient file synchronization from so
 	
 	Svsync provides an ability to skip any subfolders within a synced folder. In addition, you can use regular expressions on full file path to decide which files you want and which you don't. For example, you want to upload your photos library to S3, but you want to skip all the Thumbs.db files created by Windows, in order to save space at a target.  
   
-#Use Scenarios
+# Use Scenarios
   * Sync your stuff from home NAS to Amazon S3 once a day for disaster recovery.
     
 	You can choose only critical stuff, rather than all your files, paying only for storage taken at S3.
@@ -45,10 +45,10 @@ This project provides a tool for one-way, efficient file synchronization from so
 	You can use Windows scheduled tasks or cron job to automate the runs.
 	
 	
-#Getting Started
+# Getting Started
 
-##Download
-###Option 1: Source Via Git
+## Download
+### Option 1: Source Via Git
 
 To get the source code of the SDK via git just type:
 
@@ -56,11 +56,11 @@ To get the source code of the SDK via git just type:
     cd ./svsync
     mvn compile
 
-###Option 2: Source Zip
+### Option 2: Source Zip
 
 To download a copy of the source code, click "Download ZIP" on the right side of the page or click [here](https://github.com/sval972/svsync/archive/master.zip). Unzip and navigate to the svsync folder.
 
-##Minimum Requirements
+## Minimum Requirements
 
 * Java 1.7+
 * [Gson](https://github.com/google/gson) is used for JSON parsing.
@@ -74,7 +74,7 @@ To download a copy of the source code, click "Download ZIP" on the right side of
 
 All dependencies will be added automatically if Maven is used. Otherwise, download the jars and add them to your build path.
 
-##Usage
+## Usage
 
 To run Svsync use the following command:
 
@@ -84,7 +84,7 @@ To run Svsync use the following command:
 * -analyze is an optional flag that makes svsync to run analysis only and print report, rather than doing any actual synchronization.
 * -restore <local_path> is an optional argument that makes svsync to download all files from target (defined inside profile) to a locally specified path.
 
-##Profile Configuration
+## Profile Configuration
 ### Profile template
 
 Svsync synchronization profile should look like the following template:
@@ -175,7 +175,7 @@ Svsync scans both source and target on every run. If files don't change often at
 	<target path="azure://mystorage" secret="my_secret" cache-days="7"/>
 ```
 	
-##Sample profile 1
+## Sample profile 1
 ```xml
 <?xml version="1.0"?>
 <profile>
@@ -209,7 +209,7 @@ Svsync scans both source and target on every run. If files don't change often at
 
 ```
 
-##Sample profile 2
+## Sample profile 2
 ```xml
 	<?xml version="1.0"?>
 	<profile>
